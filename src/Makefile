@@ -2,7 +2,7 @@ CC	= mpicc
 CFLAGS	= -g -Wall -std=c99
 OUTPUT	= ../obj/
 
-all: mpihello mpihellocomm mpioutput
+all: mpihello mpihellocomm mpioutput mpireduce
 
 init:
 	mkdir -p $(OUTPUT)
@@ -15,6 +15,12 @@ mpihellocomm: init mpihellocomm.c
 
 mpioutput: init mpioutput.c
 	$(CC) $(CFLAGS) -o $(OUTPUT)mpioutput mpioutput.c
+
+single_array: init single_array.c single_array.h
+	$(CC) $(CFLAGS) -o $(OUTPUT)single_array.o -c single_array.c
+
+mpireduce: init single_array mpireduce.c
+	$(CC) $(CFLAGS) -o $(OUTPUT)mpireduce mpireduce.c $(OUTPUT)single_array.o
 
 clean:
 	rm -f *~ *.o a.out

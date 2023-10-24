@@ -5,8 +5,8 @@
 /**
  * The main entry point for the application.
  *
- * @param count     The number of command-line arguments.
- * @param arguments A collection of command-line arguments. The length of the
+ * @param count     the number of command-line arguments.
+ * @param arguments a collection of command-line arguments. The length of the
  *                  collection is given by the `count` parameter.
  * @return An exit code. This value is always 0, indicating success.
  */
