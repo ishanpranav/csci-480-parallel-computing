@@ -88,7 +88,6 @@ int main(int count, StringArray arguments)
     int n;
     double a;
     double b;
-    double integral;
 
     MPI_Init(&count, &arguments);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -97,14 +96,15 @@ int main(int count, StringArray arguments)
 
     int localN = n / size;
     double h = (b - a) / n;
-    double localA = a + rank * localN * h;
-    double localB = localA + localN * h;
+    double localA = a + (rank * localN * h);
+    double localB = localA + (localN * h);
     double localIntegral = mpitrapezoid_integrate(
         mpitrapezoid_parabola,
         localA, 
         localB,
         localN, 
         h);
+    double integral;
 
     MPI_Reduce(
         &localIntegral,
