@@ -24,7 +24,7 @@
  * @return A collection of random single-precision floating-point numbers. The
  *         length of the collection is given by the `count` parameter.
 */
-static SingleArray randomize(int count)
+static SingleArray mpireduce_randomize(int count)
 {
     SingleArray result = single_array(count);
 
@@ -63,7 +63,7 @@ int main(int count, StringArray arguments)
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     srand(rank);
 
-    SingleArray array = randomize(elementsPerProcess);
+    SingleArray array = mpireduce_randomize(elementsPerProcess);
     float localSum = 0;
     float globalSum;
 
