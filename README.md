@@ -10,4 +10,4 @@ module load mpi/openmpi-x86_64
 ```
 
 ## License
-This repository is licensed with the [MIT](LICENSE.txt) license.
+This repository is licensed with the [MIT](LICENSE.txt) license. Some files are adapted from other authors and released under their own licenses. Please see the file headers for more information.

@@ -1,3 +1,7 @@
+// mpihello.c
+// Original author G. Barlas. Modified and adapted by Ishan Pranav.
+// Licensed under the GNU GPL 3.0 license.
+
 #include <mpi.h>
 #include <stdio.h>
 #include "core.h"
