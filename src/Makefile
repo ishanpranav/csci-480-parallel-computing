@@ -1,4 +1,4 @@
-CC		= mpicc
+CC	= mpicc
 CFLAGS	= -g -Wall -std=c99
 
 all: mpihello mpihellocomm
