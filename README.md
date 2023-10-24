@@ -1,5 +1,5 @@
-# Computer Systems Organization
-This is a collection of miscellaneous problem sets from the NYU CSCI 201 Computer Systems Organization course. 
+# Parallel Computing
+This is a collection of miscellaneous problem sets from the NYU CSCI 480 Special Topics: Parallel Computing course. 
 ## API Documentation
 Project specifications are available in their respective subdirectories.
 ## License
