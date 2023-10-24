@@ -9,7 +9,7 @@ const int MAX_STRING = 100;
  * The main entry point for the application.
  *
  * @param count     The number of command-line arguments.
- * @param arguments An collection of command-line arguments. The length of the
+ * @param arguments A collection of command-line arguments. The length of the
  *                  collection is given by the `count` parameter.
  * @return An exit code. This value is always 0, indicating success.
  */
