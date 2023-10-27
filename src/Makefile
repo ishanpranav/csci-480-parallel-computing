@@ -7,7 +7,8 @@ all: \
 	mpihellocomm \
 	mpioutput \
 	mpireduce \
-	mpitrapezoid
+	mpitrapezoid \
+	mpimatrix
 
 init:
 	mkdir -p $(OUTPUT)
@@ -29,6 +30,12 @@ mpireduce: init single_array mpireduce.c
 
 mpitrapezoid: init mpitrapezoid.c
 	$(CC) $(CFLAGS) -o $(OUTPUT)mpitrapezoid mpitrapezoid.c
+
+double_array: init double_array.c double_array.h
+	$(CC) $(CFLAGS) -o $(OUTPUT)double_array.o -c double_array.c
+
+mpimatrix: init double_array mpimatrix.c
+	$(CC) $(CFLAGS) -o $(OUTPUT)mpimatrix mpimatrix.c $(OUTPUT)double_array.o
 
 clean:
 	rm -f *~ *.o a.out
