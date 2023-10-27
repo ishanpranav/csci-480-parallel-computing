@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/**
+ * @param localOk
+ * @param firstName
+ * @param message
+ * @param comm
+*/
 static void mpimatrix_assert(
     bool localOk,
     String firstName,
@@ -32,6 +38,15 @@ static void mpimatrix_assert(
     }
 }
 
+/**
+ * @param m
+ * @param localM
+ * @param n
+ * @param localN
+ * @param rank
+ * @param size
+ * @param comm
+*/
 static void mpimatrix_read(
     int *m,
     int *localM,
@@ -61,6 +76,15 @@ static void mpimatrix_read(
     *localN = *n / size;
 }
 
+/**
+ * @param prompt
+ * @param localMatrix
+ * @param m
+ * @param localM
+ * @param n
+ * @param rank
+ * @param comm
+*/
 static void mpimatrix_read_matrix(
     String prompt,
     DoubleMatrix localMatrix,
@@ -112,6 +136,14 @@ static void mpimatrix_read_matrix(
     }
 }
 
+/**
+ * @param prompt
+ * @param localVector
+ * @param n
+ * @param localN
+ * @param rank
+ * @param comm
+*/
 static void mpimatrix_read_vector(
     String prompt,
     DoubleArray localVector,
@@ -159,6 +191,15 @@ static void mpimatrix_read_vector(
     }
 }
 
+/**
+ * @param title
+ * @param localMatrix
+ * @param m
+ * @param localM
+ * @param n
+ * @param rank
+ * @param comm
+*/
 static void mpimatrix_print_matrix(
     String title,
     DoubleMatrix localMatrix,
@@ -214,6 +255,14 @@ static void mpimatrix_print_matrix(
     }
 }
 
+/**
+ * @param title
+ * @param localVector
+ * @param n
+ * @param localN
+ * @param rank
+ * @param comm
+*/
 static void mpimatrix_print_vector(
     String title,
     DoubleArray localVector,
@@ -259,6 +308,16 @@ static void mpimatrix_print_vector(
     }
 }
 
+/**
+ * @param title
+ * @param localA
+ * @param localX
+ * @param localY
+ * @param localM
+ * @param n
+ * @param localN
+ * @param comm
+*/
 static void mpimatrix_multiply(
     String title,
     DoubleMatrix localA,
