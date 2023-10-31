@@ -384,8 +384,8 @@ int main(int count, StringArray arguments)
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     mpimatrix_read(rank, size, MPI_COMM_WORLD, &m, &n);
 
-    int localM = *m / size;
-    int localN = *n / size;
+    int localM = m / size;
+    int localN = n / size;
     DoubleMatrix localA = double_matrix(localM, n);
     DoubleArray localX = double_array(localN);
 
