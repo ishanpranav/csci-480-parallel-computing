@@ -380,12 +380,9 @@ int main(int count, StringArray arguments)
     int size;
 
     MPI_Init(&count, &arguments);
-
-    MPI_Comm comm = MPI_COMM_WORLD;
-
-    MPI_Comm_size(comm, &size);
-    MPI_Comm_rank(comm, &rank);
-    mpimatrix_read(rank, size, comm, &m, &n);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    mpimatrix_read(rank, size, MPI_COMM_WORLD, &m, &n);
 
     int localM = *m / size;
     int localN = *n / size;
@@ -396,15 +393,21 @@ int main(int count, StringArray arguments)
         localA && localX && localY,
         "main",
         "Can't allocate local arrays",
-        comm);
-    mpimatrix_read_matrix("A", localA, m, localM, n, rank, comm);
-    mpimatrix_print_matrix("A", localA, m, localM, n, rank, comm);
-    mpimatrix_read_vector("x", localX, n, localN, rank, comm);
-    mpimatrix_print_vector("x", localX, n, localN, rank, comm);
+        MPI_COMM_WORLD);
+    mpimatrix_read_matrix("A", localA, m, localM, n, rank, MPI_COMM_WORLD);
+    mpimatrix_print_matrix("A", localA, m, localM, n, rank, MPI_COMM_WORLD);
+    mpimatrix_read_vector("x", localX, n, localN, rank, MPI_COMM_WORLD);
+    mpimatrix_print_vector("x", localX, n, localN, rank, MPI_COMM_WORLD);
     
-    DoubleMatrix localY = mpimatrix_multiply(localA, localX, localM, n, localN, comm);
+    DoubleMatrix localY = mpimatrix_multiply(
+        localA,
+        localX,
+        localM,
+        n,
+        localN,
+        MPI_COMM_WORLD);
 
-    mpimatrix_print_vector("y", localY, m, localM, rank, comm);
+    mpimatrix_print_vector("y", localY, m, localM, rank, MPI_COMM_WORLD);
     free(localA);
     free(localX);
     free(localY);
