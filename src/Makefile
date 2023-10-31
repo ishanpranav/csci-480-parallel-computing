@@ -37,5 +37,8 @@ double_array: init double_array.c double_array.h
 mpimatrix: init double_array mpimatrix.c
 	$(CC) $(CFLAGS) -o $(OUTPUT)mpimatrix mpimatrix.c $(OUTPUT)double_array.o
 
+lab1sequential: init lab1sequential.c
+	$(CC) $(CFLAGS) -o $(OUTPUT)lab1sequential lab1sequential.c
+	
 clean:
 	rm -f *~ *.o a.out
