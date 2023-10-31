@@ -6,14 +6,17 @@
 #include <stdlib.h>
 
 /**
- * @param localOk
- * @param firstName
- * @param message
- * @param comm
-*/
+ * Terminates the program if a success condition is not met.
+ *
+ * @param localOk true if the success condition has been met; otherwise,
+ *                false.
+ * @param source  the name of the source function that raised the assertion.
+ * @param message the error message associated with a failure condition.
+ * @param comm    the communicator.
+ */
 static void mpimatrix_assert(
     bool localOk,
-    String firstName,
+    String source,
     String message,
     MPI_Comm comm)
 {
@@ -29,7 +32,7 @@ static void mpimatrix_assert(
 
         if (rank == 0)
         {
-            fprintf(stderr, "Proc %d > In %s, %s\n", rank, firstName, message);
+            fprintf(stderr, "Proc %d > In %s, %s\n", rank, source, message);
             fflush(stderr);
         }
 
@@ -39,22 +42,24 @@ static void mpimatrix_assert(
 }
 
 /**
- * @param m
- * @param localM
- * @param n
- * @param localN
- * @param rank
- * @param size
- * @param comm
-*/
+ * Reads user-specified dimensions from the standard input stream.
+ *
+ * @param m      when this method returns, contains the user-supplied number of
+ *               rows in the matrix. This parameter is passed uninitialized;
+ *               any value originally supplied in `m` will be overwritten.
+ * @param n      when this method returns, contains the user-supplied number of
+ *               columns in the matrix. This parameter is passed uninitialized;
+ *               any value originally supplied in `n` will be overwritten.
+ * @param rank   the communicator identifier.
+ * @param size   the number of communicators.
+ * @param comm   the communicator.
+ */
 static void mpimatrix_read(
-    int *m,
-    int *localM,
-    int *n,
-    int *localN,
     int rank,
     int size,
-    MPI_Comm comm)
+    MPI_Comm comm,
+    int *m,
+    int *n)
 {
     if (rank == 0)
     {
@@ -71,20 +76,19 @@ static void mpimatrix_read(
         "mpimatrix_read",
         "m and n must be positive and evenly divisible by size",
         comm);
-
-    *localM = *m / size;
-    *localN = *n / size;
 }
 
 /**
- * @param prompt
- * @param localMatrix
- * @param m
- * @param localM
- * @param n
- * @param rank
- * @param comm
-*/
+ * Reads a user-specified matrix from the standard input stream.
+ *
+ * @param prompt      the user-friendly name of the matrix.
+ * @param localMatrix the local matrix.
+ * @param m           the number of rows in the matrix.
+ * @param localM      the local number of rows in the matrix.
+ * @param n           the number of columns in the matrix.
+ * @param rank        the communicator identifier.
+ * @param comm        the communicator.
+ */
 static void mpimatrix_read_matrix(
     String prompt,
     DoubleMatrix localMatrix,
@@ -137,13 +141,15 @@ static void mpimatrix_read_matrix(
 }
 
 /**
- * @param prompt
- * @param localVector
- * @param n
- * @param localN
- * @param rank
- * @param comm
-*/
+ * Reads a user-specified vector from the standard input stream.
+ *
+ * @param prompt      the user-friendly name of the vector.
+ * @param localVector the local vector.
+ * @param n           the length of the vector.
+ * @param localN      the local length of the vector.
+ * @param rank        the communicator identifier.
+ * @param comm        the communicator.
+ */
 static void mpimatrix_read_vector(
     String prompt,
     DoubleArray localVector,
@@ -192,14 +198,16 @@ static void mpimatrix_read_vector(
 }
 
 /**
- * @param title
- * @param localMatrix
- * @param m
- * @param localM
- * @param n
- * @param rank
- * @param comm
-*/
+ * Prints a matrix to the stndard output stream.
+ *
+ * @param title       the user-friendly name of the matrix.
+ * @param localMatrix the local matrix.
+ * @param m           the number of rows in the matrix.
+ * @param localM      the local number of rows in the matrix.
+ * @param n           the number of columns in the matrix.
+ * @param rank        the communicator identifier.
+ * @param comm        the communicator.
+ */
 static void mpimatrix_print_matrix(
     String title,
     DoubleMatrix localMatrix,
@@ -256,13 +264,15 @@ static void mpimatrix_print_matrix(
 }
 
 /**
- * @param title
- * @param localVector
- * @param n
- * @param localN
- * @param rank
- * @param comm
-*/
+ * Prints a vector to the standard output stream.
+ * 
+ * @param title       the user-friendly name of the vector.
+ * @param localVector the local vector.
+ * @param n           the length of the vector.
+ * @param localN      the local length of the vector.
+ * @param rank        the communicator identifier.
+ * @param comm        the communicator.
+ */
 static void mpimatrix_print_vector(
     String title,
     DoubleArray localVector,
@@ -309,27 +319,27 @@ static void mpimatrix_print_vector(
 }
 
 /**
- * @param title
- * @param localA
- * @param localX
- * @param localY
- * @param localM
- * @param n
- * @param localN
- * @param comm
-*/
-static void mpimatrix_multiply(
-    String title,
+ * Multiplies a matrix by a vector.
+ *  
+ * @param localA the local matrix factor.
+ * @param localX the local vector factor.
+ * @param localM the local number of rows in the matrix.
+ * @param n      the number of columns in the matrix.
+ * @param localN the local number of columns in the matrix.
+ * @param comm   the communicator.
+ * @return The local product of the local matrix and vector factors.
+ */
+static DoubleArray mpimatrix_multiply(
     DoubleMatrix localA,
     DoubleArray localX,
-    DoubleArray localY,
     int localM,
     int n,
     int localN,
     MPI_Comm comm)
 {
+    DoubleArray localY = double_array(localM);
     DoubleArray x = double_array(n);
-    
+
     mpimatrix_assert(
         x,
         "mpimatrix_multiply",
@@ -348,6 +358,8 @@ static void mpimatrix_multiply(
     }
 
     free(x);
+
+    return localY;
 }
 
 /**
@@ -362,13 +374,8 @@ static void mpimatrix_multiply(
  */
 int main(int count, StringArray arguments)
 {
-    DoubleMatrix localA;
-    DoubleArray localX;
-    DoubleArray localY;
     int m;
     int n;
-    int localM;
-    int localN;
     int rank;
     int size;
 
@@ -378,11 +385,12 @@ int main(int count, StringArray arguments)
 
     MPI_Comm_size(comm, &size);
     MPI_Comm_rank(comm, &rank);
-    mpimatrix_read(&m, &localM, &n, &localN, rank, size, comm);
+    mpimatrix_read(rank, size, comm, &m, &n);
 
-    localA = double_matrix(localM, n);
-    localX = double_array(localN);
-    localY = double_array(localM);
+    int localM = *m / size;
+    int localN = *n / size;
+    DoubleMatrix localA = double_matrix(localM, n);
+    DoubleArray localX = double_array(localN);
 
     mpimatrix_assert(
         localA && localX && localY,
@@ -393,7 +401,9 @@ int main(int count, StringArray arguments)
     mpimatrix_print_matrix("A", localA, m, localM, n, rank, comm);
     mpimatrix_read_vector("x", localX, n, localN, rank, comm);
     mpimatrix_print_vector("x", localX, n, localN, rank, comm);
-    mpimatrix_multiply(localA, localX, localY, localM, n, localN, comm);
+    
+    DoubleMatrix localY = mpimatrix_multiply(localA, localX, localM, n, localN, comm);
+
     mpimatrix_print_vector("y", localY, m, localM, rank, comm);
     free(localA);
     free(localX);
