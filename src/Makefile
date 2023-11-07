@@ -8,7 +8,9 @@ all: \
 	mpioutput \
 	mpireduce \
 	mpitrapezoid \
-	mpimatrix
+	mpimatrix \
+	lab1sequential \
+	lab1parallel
 
 init:
 	mkdir -p $(OUTPUT)
@@ -37,8 +39,14 @@ double_array: init double_array.c double_array.h
 mpimatrix: init double_array mpimatrix.c
 	$(CC) $(CFLAGS) -o $(OUTPUT)mpimatrix mpimatrix.c $(OUTPUT)double_array.o
 
-lab1sequential: init lab1sequential.c
-	$(CC) $(CFLAGS) -o $(OUTPUT)lab1sequential lab1sequential.c
+lab1: init lab1/lab1.c lab1/lab1.h
+	$(CC) $(CFLAGS) -o $(OUTPUT)lab1.o -c lab1/lab1.c
+
+lab1sequential: init lab1 lab1/lab1sequential.c
+	$(CC) $(CFLAGS) -o $(OUTPUT)lab1sequential lab1/lab1sequential.c $(OUTPUT)lab1.o
+
+lab1parallel: init lab1 lab1/lab1parallel.c
+	$(CC) $(CFLAGS) -o $(OUTPUT)lab1parallel lab1/lab1parallel.c $(OUTPUT)lab1.o
 	
 clean:
 	rm -f *~ *.o a.out

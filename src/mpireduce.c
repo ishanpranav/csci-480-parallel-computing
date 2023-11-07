@@ -14,8 +14,6 @@
 #include "core.h"
 #include "single_array.h"
 
-// Creates an array of random numbers. Each number has a value from 0 - 1
-
 /**
  * Generates a collection of random single-precision floating-point numbers
  * between 0 and 1.
@@ -44,7 +42,7 @@ static SingleArray mpireduce_randomize(int count)
  *                  collection is given by the `count` parameter.
  * @return 1 if fewer than 2 command-line arguments are provided; otherwise, 0.
  */
-int main(int count, StringArray arguments)
+int main(int count, String arguments[])
 {
     if (count != 2)
     {

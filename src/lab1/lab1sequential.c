@@ -1,26 +1,6 @@
 #include <stdio.h>
 #include "../core.h"
-
-/**
- *
- * @param n
- * @param divisor
- * @return
- */
-static int lab1sequential_count_factors(int n, int divisor)
-{
-    int result = 0;
-
-    for (int i = 2; i <= n; i++)
-    {
-        if (i % divisor == 0)
-        {
-            result++;
-        }
-    }
-
-    return result;
-}
+#include "lab1.h"
 
 /**
  * The main entry point for the application.
@@ -30,17 +10,21 @@ static int lab1sequential_count_factors(int n, int divisor)
  *                  collection is given by the `count` parameter.
  * @return An exit code. This value is always 0, indicating success.
  */
-int main(int count, StringArray arguments)
+int main(int count, String arguments[])
 {
+    const int RESULTS_COUNT = 5;
+
     int n;
+    int results[RESULTS_COUNT];
 
     scanf("%d", &n);
-    printf("%d: %d\n%d: %d\n%d: %d\n%d: %d\n%d: %d",
-           2, lab1sequential_count_factors(n, 2),
-           3, lab1sequential_count_factors(n, 3),
-           5, lab1sequential_count_factors(n, 5),
-           7, lab1sequential_count_factors(n, 7),
-           13, lab1sequential_count_factors(n, 13));
+    lab1_count_factors(2, n - 2, RESULTS_COUNT, results, 2, 3, 5, 7, 13);
+    printf("%d: %d\n%d: %d\n%d: %d\n%d: %d\n%d: %d\n",
+        2, results[0],
+        3, results[1],
+        5, results[2],
+        7, results[3],
+        13, results[4]);
 
     return 0;
 }

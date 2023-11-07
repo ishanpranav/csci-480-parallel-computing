@@ -372,7 +372,7 @@ static DoubleArray mpimatrix_multiply(
  *         the process may exit with an error code of 1, indicating failure
  *         outside the main entry point.
  */
-int main(int count, StringArray arguments)
+int main(int count, String arguments[])
 {
     int m;
     int n;
