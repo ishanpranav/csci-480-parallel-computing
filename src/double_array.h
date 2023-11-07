@@ -1,11 +1,11 @@
 /** Represents an array of double-precision floating-point numbers. */
-typedef float *DoubleArray;
+typedef double *DoubleArray;
 
 /**
  * Represents a two-dimensional array of double-precision floating-point
  * numbers.
  */
-typedef float *DoubleMatrix;
+typedef double *DoubleMatrix;
 
 /**
  * Initializes a new array of double-precision floating-point numbers with the

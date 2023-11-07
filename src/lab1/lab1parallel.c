@@ -17,7 +17,6 @@ int main(int count, StringArray arguments)
     MPI_Init(&count, &arguments);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-    printf("Hello from process %i of %i\n", rank, size);
     MPI_Finalize();
 
     return 0;

@@ -390,7 +390,7 @@ int main(int count, StringArray arguments)
     DoubleArray localX = double_array(localN);
 
     mpimatrix_assert(
-        localA && localX && localY,
+        localA && localX,
         "main",
         "Can't allocate local arrays",
         MPI_COMM_WORLD);
