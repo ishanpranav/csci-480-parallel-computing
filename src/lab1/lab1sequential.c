@@ -12,19 +12,14 @@
  */
 int main(int count, String arguments[])
 {
-    const int RESULTS_COUNT = 5;
+    const int LAB1_RESULT_COUNT = 5;
 
     int n;
-    int results[RESULTS_COUNT];
+    int results[LAB1_RESULT_COUNT];
 
     scanf("%d", &n);
-    lab1_count_factors(2, n - 2, RESULTS_COUNT, results, 2, 3, 5, 7, 13);
-    printf("%d: %d\n%d: %d\n%d: %d\n%d: %d\n%d: %d\n",
-        2, results[0],
-        3, results[1],
-        5, results[2],
-        7, results[3],
-        13, results[4]);
+    lab1_count_factors(2, n, LAB1_RESULT_COUNT, results, 2, 3, 5, 7, 13);
+    lab1_print_factors(LAB1_RESULT_COUNT, results, 2, 3, 5, 7, 13);
 
     return 0;
 }
