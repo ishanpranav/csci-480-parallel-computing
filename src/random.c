@@ -11,7 +11,16 @@ Random random()
     return result;
 }
 
-int random_next(Random instance, int minValue, int maxValue)
+int random_next(
+    Random instance,
+    int minValue,
+    int maxValue,
+    Exception exception)
 {
-    return 0;
+    if (minValue > maxValue)
+    {
+        return throws(exception, EXCEPTION_ARGUMENT_OUT_OF_RANGE);
+    }
+
+    return (rand_r(instance) % maxValue) + minValue;
 }
