@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "core.h"
-#include "func.h"
+#include "double_double_func.h"
 
 /**
  * Approximates a definite integral using a trapezoidal Riemann sum.

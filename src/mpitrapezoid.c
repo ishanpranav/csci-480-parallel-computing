@@ -1,7 +1,7 @@
 #include <mpi.h>
 #include <stdio.h>
 #include "core.h"
-#include "func.h"
+#include "double_double_func.h"
 
 /**
  * Reads the properties of a trapezoid from the standard input stream and

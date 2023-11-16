@@ -56,8 +56,8 @@ lab1parallel: init lab1 lab1/lab1parallel.c
 omptrapezoid: init omptrapezoid.c
 	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omptrapezoid omptrapezoid.c
 
-int_array: init int_array.c int_array.h
-	$(CC) $(CFLAGS) -o $(OUTPUT)int_array.o -c int_array.c
+core: init core.c core.h
+	$(CC) $(CFLAGS) -o $(OUTPUT)core.o -c core.c
 
 exception: init exception.c exception.h
 	$(CC) $(CFLAGS) -o $(OUTPUT)exception.o -c exception.c
@@ -65,11 +65,11 @@ exception: init exception.c exception.h
 random: init exception random.c random.h
 	$(CC) $(CFLAGS) -o $(OUTPUT)random.o -c random.c
 
-omppi: init random int_array omppi.c
-	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omppi omppi.c $(OUTPUT)int_array.o $(OUTPUT)random.o $(OUTPUT)exception.o
+omppi: init random core omppi.c
+	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omppi omppi.c $(OUTPUT)core.o $(OUTPUT)random.o $(OUTPUT)exception.o
 
-lab2sequential: init int_array lab2/lab2sequential.c
-	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)lab2sequential lab2/lab2sequential.c $(OUTPUT)int_array.o
+lab2sequential: init core lab2/lab2sequential.c
+	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)lab2sequential lab2/lab2sequential.c $(OUTPUT)core.o
 
 clean:
 	rm -f *~ *.o a.out

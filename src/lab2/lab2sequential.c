@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../core.h"
-#include "../int_array.h"
+#include "../file.h"
+#include "../file_stream.h"
 
 /**
  * The main entry point for the application.
@@ -24,9 +25,9 @@ int main(int count, String args[])
 
     long n = strtol(args[1], NULL, 10);
 
-    if (n < 2)
+    if (n < 2 || n > 10000000)
     {
-        printf("<n> must be a positive number greater than 2.\n");
+        printf("<n> must be a positive number between 2 and 10000000.\n");
 
         return 1;
     }
@@ -38,7 +39,7 @@ int main(int count, String args[])
         printf("<threads> must be a positive number.\n");
     }
 
-    IntArray values = int_array(n - 1);
+    LongArray values = long_array(n - 1);
 
     for (int i = 2; i <= n; i++)
     {
@@ -47,7 +48,7 @@ int main(int count, String args[])
 
     int j = 2;
 
-    while (j <= floor((n + 1) / 2))
+    while (j <= math_floor((n + 1) / 2))
     {
         for (int i = j + 1; i <= n; i++)
         {
@@ -68,11 +69,19 @@ int main(int count, String args[])
         }
     }
 
+    char buffer[13];
+
+    sprintf(buffer, "%ld.txt", n);
+
+    FileStream stream = file_create(buffer);
+
     for (int i = 0; i < n - 1; i++)
     {
         if (values[i])
         {
-            printf("%d\n", values[i]);
+            fprintf(stream, "%ld ", values[i]);
         }
     }
+
+    file_stream_close(stream);
 }

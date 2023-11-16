@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "core.h"
-#include "int_array.h"
 #include "random.h"
 
 /**
