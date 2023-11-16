@@ -365,21 +365,21 @@ static DoubleArray mpimatrix_multiply(
 /**
  * The main entry point for the application.
  *
- * @param count     the number of command-line arguments.
- * @param arguments a collection of command-line arguments. The length of the
- *                  collection is given by the `count` parameter.
+ * @param count the number of command-line arguments.
+ * @param args  a collection of command-line arguments. The length of the
+ *              collection is given by the `count` parameter.
  * @return An exit code. This value is always 0, indicating success. However,
  *         the process may exit with an error code of 1, indicating failure
  *         outside the main entry point.
  */
-int main(int count, String arguments[])
+int main(int count, String args[])
 {
     int m;
     int n;
     int rank;
     int size;
 
-    MPI_Init(&count, &arguments);
+    MPI_Init(&count, &args);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     mpimatrix_read(rank, size, MPI_COMM_WORLD, &m, &n);

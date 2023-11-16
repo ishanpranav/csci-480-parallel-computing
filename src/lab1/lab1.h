@@ -7,7 +7,6 @@
  * @param count
  * @param results
  */
-
 void lab1_count_factors(int min, int max, int count, int results[], ...);
 
 /**

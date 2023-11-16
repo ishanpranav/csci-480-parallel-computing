@@ -76,12 +76,12 @@ static double mpitrapezoid_integrate(
 /**
  * The main entry point for the application.
  *
- * @param count     the number of command-line arguments.
- * @param arguments a collection of command-line arguments. The length of the
- *                  collection is given by the `count` parameter.
+ * @param count the number of command-line arguments.
+ * @param args  a collection of command-line arguments. The length of the
+ *              collection is given by the `count` parameter.
  * @return An exit code. This value is always 0, indicating success.
  */
-int main(int count, String arguments[])
+int main(int count, String args[])
 {
     int rank;
     int size;
@@ -89,7 +89,7 @@ int main(int count, String arguments[])
     double a;
     double b;
 
-    MPI_Init(&count, &arguments);
+    MPI_Init(&count, &args);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     mpitrapezoid_read(rank, size, &a, &b, &n);

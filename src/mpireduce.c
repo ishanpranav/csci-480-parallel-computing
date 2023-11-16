@@ -37,12 +37,12 @@ static SingleArray mpireduce_randomize(int count)
 /**
  * The main entry point for the application.
  *
- * @param count     the number of command-line arguments.
- * @param arguments a collection of command-line arguments. The length of the
- *                  collection is given by the `count` parameter.
- * @return 1 if fewer than 2 command-line arguments are provided; otherwise, 0.
+ * @param count the number of command-line arguments.
+ * @param args  a collection of command-line arguments. The length of the
+ *              collection is given by the `count` parameter.
+ * @return An exit code. This value is always 0, indicating success.
  */
-int main(int count, String arguments[])
+int main(int count, String args[])
 {
     if (count != 2)
     {
@@ -51,7 +51,7 @@ int main(int count, String arguments[])
         return 1;
     }
 
-    int elementsPerProcess = atoi(arguments[1]);
+    int elementsPerProcess = atoi(args[1]);
     int rank;
     int size;
     

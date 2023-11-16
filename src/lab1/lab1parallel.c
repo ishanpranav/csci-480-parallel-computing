@@ -7,12 +7,12 @@
 /**
  * The main entry point for the application.
  *
- * @param count     the number of command-line arguments.
- * @param arguments a collection of command-line arguments. The length of the
- *                  collection is given by the `count` parameter.
+ * @param count the number of command-line arguments.
+ * @param args  a collection of command-line arguments. The length of the
+ *              collection is given by the `count` parameter.
  * @return An exit code. This value is always 0, indicating success.
  */
-int main(int count, String arguments[])
+int main(int count, String args[])
 {
     if (count != 2)
     {
@@ -21,9 +21,9 @@ int main(int count, String arguments[])
         return 1;
     }
 
-    int n = atoi(arguments[1]);
+    int n = atoi(args[1]);
 
-    MPI_Init(&count, &arguments);
+    MPI_Init(&count, &args);
     MPI_Barrier(MPI_COMM_WORLD);
 
     const int LAB1_RESULT_COUNT = 5;

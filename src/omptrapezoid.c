@@ -1,6 +1,5 @@
-#include <mpi.h>
-#include <stdio.h>
-#include "core.h"
+#include <omp.h>
+#include "../core.h"
 
 /**
  * The main entry point for the application.
@@ -12,14 +11,5 @@
  */
 int main(int count, String args[])
 {
-    int rank;
-    int size;
 
-    MPI_Init(&count, &args);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    printf("Proc %d of %d > Does anyone have a toothpick?\n", rank, size);
-    MPI_Finalize();
-
-    return 0;
 }
