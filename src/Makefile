@@ -55,14 +55,17 @@ lab1parallel: init lab1 lab1/lab1parallel.c
 omptrapezoid: init omptrapezoid.c
 	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omptrapezoid omptrapezoid.c
 
-random: init random.c random.h
-	$(CC) $(CFLAGS) -o $(OUTPUT)random.o -c random.c
-
 int_array: init int_array.c int_array.h
 	$(CC) $(CFLAGS) -o $(OUTPUT)int_array.o -c int_array.c
 
+exception: init exception.c exception.h
+	$(CC) $(CFLAGS) -o $(OUTPUT)exception.o -c exception.c
+
+random: init exception random.c random.h
+	$(CC) $(CFLAGS) -o $(OUTPUT)random.o -c random.c
+
 omppi: init random int_array omppi.c
-	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omppi omppi.c $(OUTPUT)random.o $(OUTPUT)int_array.o
+	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omppi omppi.c $(OUTPUT)int_array.o $(OUTPUT)random.o $(OUTPUT)exception.o
 
 clean:
 	rm -f *~ *.o a.out

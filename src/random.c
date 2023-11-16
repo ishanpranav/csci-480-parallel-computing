@@ -2,13 +2,11 @@
 #include <time.h>
 #include "random.h"
 
-Random random()
+Random random_get_shared()
 {
-    Random result = malloc(sizeof(unsigned int));
+    srand(time(NULL));
 
-    *result = time(NULL);
-
-    return result;
+    return NULL;
 }
 
 int random_next(
@@ -19,8 +17,10 @@ int random_next(
 {
     if (minValue > maxValue)
     {
-        return throws(exception, EXCEPTION_ARGUMENT_OUT_OF_RANGE);
+        throws(exception, EXCEPTION_ARGUMENT_OUT_OF_RANGE);
+
+        return 0;
     }
 
-    return (rand_r(instance) % maxValue) + minValue;
+    return (rand() % maxValue) + minValue;
 }

@@ -1,6 +1,7 @@
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "core.h"
 #include "int_array.h"
 #include "random.h"
@@ -23,16 +24,42 @@ int main(int count, String args[])
         return 1;
     }
 
+    int i;
     int n = atoi(args[1]);
     int blockSize = atoi(args[2]);
     double t0 = omp_get_wtime();
     IntArray durations = int_array(n);
-    Random randomInstance = random();
-    
-    for (int i = 0; i < n; i++)
+    Random shared = random_get_shared();
+
+    for (i = 0; i < n; i++)
     {
-        durations[i] = random_next(randomInstance, 1, 5);
+        durations[i] = random_next(shared, 1, 5, NULL);
     }
+
+    double t1;
+    double t2;
+
+#pragma omp parallel shared(n) private(i, t1, t2) num_threads(4)
+    {
+#pragma omp for schedule(static, blockSize)
+        for (i = 0; i < n; i++)
+        {
+            t1 = omp_get_wtime();
+
+            sleep(durations[i]);
+
+            t2 = omp_get_wtime();
+
+            printf(
+                "Iteration %d: Thread %d, started %e, duration %e\n",
+                i,
+                omp_get_thread_num(),
+                t1 - t0,
+                t2 - t1);
+        }
+    }
+
+    printf("CPU time used: %.2f sec\n", omp_get_wtime() - t0);
 
     return 0;
 }

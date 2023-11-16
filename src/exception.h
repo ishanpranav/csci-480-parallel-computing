@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 enum Exception
 {
     EXCEPTION_ARGUMENT_OUT_OF_RANGE
@@ -5,4 +7,5 @@ enum Exception
 
 typedef enum Exception *Exception;
 
-void *throw(Exception exception, enum Exception value);
+void *throws(Exception exception, enum Exception value);
+bool catches(Exception exception, enum Exception value);
