@@ -10,7 +10,8 @@
  * @param count the number of command-line arguments.
  * @param args  a collection of command-line arguments. The length of the
  *              collection is given by the `count` parameter.
- * @return An exit code. This value is always 0, indicating success.
+ * @return This value is 0, indicating success, or 1, indicating
+ *         a usage error.
  */
 int main(int count, String args[])
 {

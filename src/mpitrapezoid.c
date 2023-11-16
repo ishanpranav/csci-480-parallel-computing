@@ -49,6 +49,7 @@ static double mpitrapezoid_parabola(double x)
 /**
  * Approximates a definite integral using a trapezoidal Riemann sum.
  *
+ * @param f  the function whose integral to approximate
  * @param a  the lower bound of the integration
  * @param b  the upper bound of the integration
  * @param dx the width of each trapezoid, or the horizontal change
@@ -95,15 +96,15 @@ int main(int count, String args[])
     mpitrapezoid_read(rank, size, &a, &b, &n);
 
     int localN = n / size;
-    double h = (b - a) / n;
-    double localA = a + (rank * localN * h);
-    double localB = localA + (localN * h);
+    double dx = (b - a) / n;
+    double localA = a + (rank * localN * dx);
+    double localB = localA + (localN * dx);
     double localIntegral = mpitrapezoid_integrate(
         mpitrapezoid_parabola,
         localA, 
         localB,
         localN, 
-        h);
+        dx);
     double integral;
 
     MPI_Reduce(
