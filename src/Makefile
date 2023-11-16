@@ -66,10 +66,16 @@ random: init exception random.c random.h
 	$(CC) $(CFLAGS) -o $(OUTPUT)random.o -c random.c
 
 omppi: init random core omppi.c
-	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omppi omppi.c $(OUTPUT)core.o $(OUTPUT)random.o $(OUTPUT)exception.o
+	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omppi omppi.c $(OUTPUT)core.o $(OUTPUT)random.o $(OUTPUT)exception.o -lm
 
-lab2sequential: init core lab2/lab2sequential.c
-	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)lab2sequential lab2/lab2sequential.c $(OUTPUT)core.o
+file: init file.c file.h
+	$(CC) $(CFLAGS) -o $(OUTPUT)file.o -c file.c
+
+file_stream: init file_stream.c file_stream.h
+	$(CC) $(CFLAGS) -o $(OUTPUT)file_stream.o -c file_stream.c
+
+lab2sequential: init core file file_stream lab2/lab2sequential.c
+	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)lab2sequential lab2/lab2sequential.c $(OUTPUT)core.o $(OUTPUT)file.o $(OUTPUT)exception.o $(OUTPUT)file_stream.o -lm
 
 clean:
 	rm -f *~ *.o a.out

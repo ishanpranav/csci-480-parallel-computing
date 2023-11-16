@@ -34,7 +34,4 @@ LongArray long_array(int length);
  *         is equal to `NAN`, `-INFINITY`, or `INFINITY`, that value is
  *         returned.
 */
-double math_floor(double value)
-{
-    return floor(value);
-}
+double math_floor(double value);

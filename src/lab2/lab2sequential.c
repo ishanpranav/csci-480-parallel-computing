@@ -73,7 +73,15 @@ int main(int count, String args[])
 
     sprintf(buffer, "%ld.txt", n);
 
-    FileStream stream = file_create(buffer);
+    Exception exception = NULL;
+    FileStream stream = file_create(buffer, exception);
+
+    if (catches(exception, EXCEPTION))
+    {
+        perror(NULL);
+
+        return 1;
+    }
 
     for (int i = 0; i < n - 1; i++)
     {
@@ -83,5 +91,5 @@ int main(int count, String args[])
         }
     }
 
-    file_stream_close(stream);
+    file_stream_dispose(stream);
 }
