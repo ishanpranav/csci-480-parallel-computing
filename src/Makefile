@@ -13,7 +13,8 @@ all: \
 	mpimatrix \
 	lab1sequential \
 	lab1parallel \
-	omptrapezoid
+	omptrapezoid \
+	omppi
 
 init:
 	mkdir -p $(OUTPUT)
@@ -55,7 +56,13 @@ omptrapezoid: init omptrapezoid.c
 	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omptrapezoid omptrapezoid.c
 
 random: init random.c random.h
-	$(CC) $(CFLAGS) -o $(OUTPUT)random random.c
-	
+	$(CC) $(CFLAGS) -o $(OUTPUT)random.o -c random.c
+
+int_array: init int_array.c int_array.h
+	$(CC) $(CFLAGS) -o $(OUTPUT)int_array.o -c int_array.c
+
+omppi: init random int_array omppi.c
+	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omppi omppi.c $(OUTPUT)random.o $(OUTPUT)int_array.o
+
 clean:
 	rm -f *~ *.o a.out

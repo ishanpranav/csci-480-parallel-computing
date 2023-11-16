@@ -1,7 +1,9 @@
 #include <omp.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "core.h"
 #include "int_array.h"
+#include "random.h"
 
 /**
  * The main entry point for the application.
@@ -25,10 +27,11 @@ int main(int count, String args[])
     int blockSize = atoi(args[2]);
     double t0 = omp_get_wtime();
     IntArray durations = int_array(n);
+    Random randomInstance = random();
     
     for (int i = 0; i < n; i++)
     {
-        durations[i] = 1 + (rand() % 5);
+        durations[i] = random_next(randomInstance, 1, 5);
     }
 
     return 0;
