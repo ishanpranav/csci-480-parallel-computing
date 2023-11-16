@@ -6,6 +6,8 @@ void *throws(Exception exception, enum Exception value)
     {
         *exception = value;
     }
+
+    return 0;
 }
 
 bool catches(Exception exception, enum Exception value)

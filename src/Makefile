@@ -14,7 +14,8 @@ all: \
 	lab1sequential \
 	lab1parallel \
 	omptrapezoid \
-	omppi
+	omppi \
+	lab2sequential
 
 init:
 	mkdir -p $(OUTPUT)
@@ -66,6 +67,9 @@ random: init exception random.c random.h
 
 omppi: init random int_array omppi.c
 	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omppi omppi.c $(OUTPUT)int_array.o $(OUTPUT)random.o $(OUTPUT)exception.o
+
+lab2sequential: init int_array lab2/lab2sequential.c
+	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)lab2sequential lab2/lab2sequential.c $(OUTPUT)int_array.o
 
 clean:
 	rm -f *~ *.o a.out

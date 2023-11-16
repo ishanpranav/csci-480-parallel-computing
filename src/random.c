@@ -4,8 +4,6 @@
 
 Random random_get_shared()
 {
-    srand(time(NULL));
-
     return NULL;
 }
 
@@ -22,5 +20,5 @@ int random_next(
         return 0;
     }
 
-    return (rand() % maxValue) + minValue;
+    return (rand() % (maxValue - minValue)) + minValue;
 }
