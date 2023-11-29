@@ -76,12 +76,12 @@ int main(int count, char *args[])
     // int vector[312500];
     BitVector filtered = bit_vector(n - 1);
 
-    // if (!filtered)
-    // {
-    //     printf("Error: Out of memory.\rn");
+    if (!filtered)
+    {
+        printf("Error: Out of memory.\rn");
 
-    //     return 1;
-    // }
+        return 1;
+    }
     
     // We will stop at ((n - 2 + 1) / 2) = ((n - 1) / 2).
 
@@ -144,7 +144,7 @@ int main(int count, char *args[])
     }
 
     fclose(stream);
-    //free(filtered);
+    free(filtered);
     printf("%ld\n", x);
 
     return 0;
