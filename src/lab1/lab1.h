@@ -1,5 +1,3 @@
-#include "../core.h"
-
 /**
  *
  * @param min
@@ -7,11 +5,11 @@
  * @param count
  * @param results
  */
-void lab1_count_factors(int min, int max, int count, int results[], ...);
+void lab1_count_factors(long min, long max, long count, long results[], ...);
 
 /**
  * 
  * @param count
  * @param results
 */
-void lab1_print_factors(int count, int results[], ...);
+void lab1_print_factors(long count, long results[], ...);

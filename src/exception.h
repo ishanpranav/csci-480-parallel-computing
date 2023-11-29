@@ -15,7 +15,7 @@ enum Exception
 
 typedef enum Exception *Exception;
 
-void *throws(Exception exception, enum Exception value);
+void throws(Exception exception, enum Exception value);
 bool catches(Exception exception, enum Exception value);
 
 #endif

@@ -22,25 +22,25 @@ int main(int count, String args[])
         return 1;
     }
 
-    int n = atoi(args[1]);
+    long n = atoi(args[1]);
 
     MPI_Init(&count, &args);
     MPI_Barrier(MPI_COMM_WORLD);
 
-    const int LAB1_RESULT_COUNT = 5;
+    const long LAB1_RESULT_COUNT = 5;
 
     int rank;
     int size;
-    int results[LAB1_RESULT_COUNT];
-    int totals[LAB1_RESULT_COUNT];
+    long results[LAB1_RESULT_COUNT];
+    long totals[LAB1_RESULT_COUNT];
     double start = MPI_Wtime();
 
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    int length = ((n - 2) / size) + 1;
-    int min = (length * rank) + 2;
-    int max = min + length;
+    long length = ((n - 2) / size) + 1;
+    long min = (length * rank) + 2;
+    long max = min + length;
 
     if (rank == size - 1)
     {

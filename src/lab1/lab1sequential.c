@@ -12,12 +12,12 @@
  */
 int main(int count, String args[])
 {
-    const int LAB1_RESULT_COUNT = 5;
+    const long LAB1_RESULT_COUNT = 5;
 
-    int n;
-    int results[LAB1_RESULT_COUNT];
+    long n;
+    long results[LAB1_RESULT_COUNT];
 
-    scanf("%d", &n);
+    scanf("%ld", &n);
     lab1_count_factors(2, n, LAB1_RESULT_COUNT, results, 2, 3, 5, 7, 13);
     lab1_print_factors(LAB1_RESULT_COUNT, results, 2, 3, 5, 7, 13);
 

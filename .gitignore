@@ -1,5 +1,5 @@
 .vscode/
 obj/
-src/lab1/ihp2012.c
+src/*.txt
 *.exe
 *.obj

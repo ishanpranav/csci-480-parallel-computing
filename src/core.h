@@ -1,11 +1,12 @@
+#ifndef SYSTEM_H
+#define SYSTEM_H
+#define ARRAY_MAX_LENGTH SIZE_MAX
+
 /** Represents text as a sequence of zero-terminated ASCII characters. */
 typedef char *String;
 
 /** Represents a two-dimensional array of signed integers. */
 typedef int* IntArray;
-
-/** Represents a two-dimensional array of signed long integers. */
-typedef long* LongArray;
 
 /**
  * Initializes a new array of signed integers with the specified `length`.
@@ -17,15 +18,6 @@ typedef long* LongArray;
 IntArray int_array(int length);
 
 /**
- * Initializes a new array of signed long integers with the specified `length`.
- * 
- * @param length the size of the array to create.
- * @return A new one-dimensional array of signed long integers with the
- *         specified length.
-*/
-LongArray long_array(int length);
-
-/**
  * Returns the largest integral value less than or equal to the specified
  * double-precision floating-point number.
  * 
@@ -35,3 +27,5 @@ LongArray long_array(int length);
  *         returned.
 */
 double math_floor(double value);
+
+#endif

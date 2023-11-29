@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "core.h"
 #include "exception.h"
 #include "file_stream.h"
 

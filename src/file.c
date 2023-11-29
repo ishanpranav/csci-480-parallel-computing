@@ -1,13 +1,14 @@
 #include <errno.h>
 #include <stdio.h>
-#include "core.h"
 #include "file.h"
 
 FileStream file_create(String path, Exception exception)
 {
     if (!path)
     {
-        return throws(exception, EXCEPTION_ARGUMENT_NULL);
+        throws(exception, EXCEPTION_ARGUMENT_NULL);
+
+        return NULL;
     }
 
     FileStream result = fopen(path, "w");
@@ -17,11 +18,16 @@ FileStream file_create(String path, Exception exception)
         switch (errno)
         {
         case EACCES:
-            return throws(exception, EXCEPTION_UNAUTHORIZED_ACCESS);
+            throws(exception, EXCEPTION_UNAUTHORIZED_ACCESS);
+            return NULL;
+
         case ENAMETOOLONG:
-            return throws(exception, EXCEPTION_PATH_TOO_LONG);
+            throws(exception, EXCEPTION_PATH_TOO_LONG);
+            return NULL;
+
         case ENOENT:
-            return throws(exception, EXCEPTION_DIRECTORY_NOT_FOUND);
+            throws(exception, EXCEPTION_DIRECTORY_NOT_FOUND);
+            return NULL;
         }
     }
 
