@@ -3,34 +3,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-const int DENOMINATOR = sizeof(int) * 8;
-
-typedef int *BitVector;
-//typedef bool *BitVector;
-
-BitVector bit_vector(int length)
-{
-    if (length <= 0)
-    {
-        return NULL;
-    }
-
-    //return calloc(length, sizeof(bool));
-    return calloc(length / DENOMINATOR + (length % DENOMINATOR != 0), sizeof(int));
-}
-
-void bit_vector_set(BitVector instance, int index)
-{
-    instance[index / DENOMINATOR] |= (1 << (index % DENOMINATOR));
-    //instance[index] = true;
-}
-
-bool bit_vector_get(BitVector instance, int index)
-{
-    return instance[index / DENOMINATOR] & (1 << (index % DENOMINATOR));
-    //return instance[index];
-}
-
 /**
  * The main entry point for the application.
  *
@@ -69,28 +41,33 @@ int main(int count, char *args[])
         return 1;
     }
 
-    // There are (n - 2 + 1) = (n - 1) numbers between 2 (inclusive) and n
-    // (inclusive).maps positions to number
+    bool *composites = calloc((n - 1), sizeof *composites);
+    long end = n - 2;
 
-    //BitVector filtered = bit_vector(n - 1);
-    // int vector[312500];
-    BitVector filtered = bit_vector(n - 1);
-
-    if (!filtered)
+    if (!composites)
     {
         printf("Error: Out of memory.\rn");
 
         return 1;
     }
-    
-    // We will stop at ((n - 2 + 1) / 2) = ((n - 1) / 2).
+
+    /**
+     * FOR EACH factor IN [2, (n + 1) / 2]
+     *  IF factor is crossed out THEN NEXT
+     *  FOR EACH product IN [factor + 1, n]
+     *   IF product is crossed out THEN NEXT
+     *   IF product is divisible by factor THEN cross out product
+     *   NEXT
+     * NEXT
+    */
 
     double start = omp_get_wtime();
-    long end = (n - 1) / 2;
+
+    end = ((n - 2) + 1) / 2;
 
     for (long i = 0; i <= end; i++)
     {
-        if (bit_vector_get(filtered, i))
+        if (composites[i])
         {
             continue;
         }
@@ -98,15 +75,14 @@ int main(int count, char *args[])
 #pragma omp parallel for num_threads(threads)
         for (long j = i + 1; j <= n - 2; j++)
         {
-            // does this check help?
-            if (bit_vector_get(filtered, j))
+            if (composites[j])
             {
                 continue;
             }
 
             if ((j + 2) % (i + 2) == 0)
             {
-                bit_vector_set(filtered, j);
+                composites[j] = true;
             }
         }
     }
@@ -127,7 +103,7 @@ int main(int count, char *args[])
     if (!stream)
     {
         printf("Error: I/O.\n");
-        
+
         return 1;
     }
 
@@ -135,16 +111,18 @@ int main(int count, char *args[])
 
     for (long i = 0; i <= n - 2; i++)
     {
-        if (!bit_vector_get(filtered, i))
+        if (composites[i])
         {
-            x++;
-
-            fprintf(stream, "%ld ", i + 2);
+            continue;
         }
+
+        x++;
+
+        fprintf(stream, "%ld ", i + 2);
     }
 
     fclose(stream);
-    free(filtered);
+    free(composites);
     printf("%ld\n", x);
 
     return 0;
