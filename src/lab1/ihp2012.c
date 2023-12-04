@@ -6,75 +6,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <mpi.h>
-#define RESULT_COUNT 5
 
 /** Represents text as a zero-terminated sequence of characters. */
-typedef char *String;
-
-/**
- * Counts the multiples in a relevant range.
- *
- * @param min     the inclusive lower bound of the iteration.
- * @param max     the inclusive upper bound of the iteration.
- * @param count   the number of factors.
- * @param results the `count`-sized output buffer, followed by `count` factors
- *                supplied as a parameterized array.
- */
-static void multiples(long min, long max, long count, long results[], ...)
-{
-    for (long j = 0; j < count; j++)
-    {
-        results[j] = 0;
-    }
-
-    va_list params;
-
-    for (long i = min; i <= max; i++)
-    {
-        va_start(params, results);
-
-        for (long j = 0; j < count; j++)
-        {
-            if (i % va_arg(params, long) == 0)
-            {
-                results[j]++;
-            }
-        }
-
-        va_end(params);
-    }
-}
-
-/**
- * Prints the number of multiples in the range.
- *
- * @param count   the number of factors.
- * @param results the `count`-sized output buffer, followed by `count` factors
- *                supplied as a parameterized array.
- */
-static void write(long count, long results[], ...)
-{
-    va_list params;
-
-    va_start(params, results);
-
-    for (long j = 0; j < count; j++)
-    {
-        printf("%ld: %ld\n", va_arg(params, long), results[j]);
-    }
-
-    va_end(params);
-}
+typedef char* String;
 
 /**
  * The main entry point for the application.
  *
  * @param count the number of command-line arguments.
  * @param args  a collection of command-line arguments. The length of the
- *              collection is given by the `count` parameter. By convention,
- *              the first argument is the name of the program.
- * @return This value is 0, indicating success, or 1, indicating
- *         a usage error.
+ *              collection is given by the `count` parameter.
+ * @return An exit code. This value is always 0, indicating success.
  */
 int main(int count, String args[])
 {
@@ -85,43 +27,67 @@ int main(int count, String args[])
         return 1;
     }
 
-    long n = atoi(args[1]);
+    int n = atoi(arguments[1]);
 
-    MPI_Init(&count, &args);
+    MPI_Init(&count, &arguments);
     MPI_Barrier(MPI_COMM_WORLD);
+
+    const int LAB1_RESULT_COUNT = 5;
 
     int rank;
     int size;
-    long results[RESULT_COUNT];
-    long totals[RESULT_COUNT];
+    int factors[] = {2, 3, 5, 7, 13};
+    int results[] = {0, 0, 0, 0, 0};
+    int totals[LAB1_RESULT_COUNT];
     double start = MPI_Wtime();
 
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    long length = ((n - 2) / size) + 1;
-    long min = (length * rank) + 2;
-    long max = min + length;
+    int length = ((n - 2) / size) + 1;
+    int min = (length * rank) + 2;
+    int max = min + length;
 
     if (rank == size - 1)
     {
+        // The last process handles the remainder.
+
         max = n;
     }
     else
     {
+        // Adding 1 to the length ensured the length was not 0 in the case when
+        // the number of processes is greater than the number of elements. Now
+        // the extra 1 can be removed.
+
         max--;
     }
-
+    
     if (max > n)
     {
+        // If the number of processes is greater than the number of elements,
+        // then we will overshoot, since we set the length to 1. So some of the
+        // processes are redundant and will be idle. We can create the
+        // illogical range [max + 1, max] to make sure the process does nothing.
+
         min = max + 1;
     }
 
-    multiples(min, max, 5, results, 2, 3, 5, 7, 13);
+    for (int i = min; i <= max; i++)
+    {
+        for (int j = 0; j < LAB1_RESULT_COUNT; j++)
+        {
+            if (i % factors[j] == 0)
+            {
+                results[j]++;
+            }
+        }
+    }
+
     MPI_Reduce(
         results,
         totals,
-        RESULT_COUNT,
+        LAB1_RESULT_COUNT,
         MPI_INT,
         MPI_SUM,
         0,
@@ -141,10 +107,18 @@ int main(int count, String args[])
         MPI_COMM_WORLD);
     MPI_Finalize();
 
-    if (rank == 0)
+    // Only process 0 will print to the standard output stream.
+
+    if (rank != 0)
     {
-        printf("Elapsed: %lf s\n", elapsed);
-        write(RESULT_COUNT, totals, 2, 3, 5, 7, 13);
+        return 0;
+    }
+
+    printf("%lf s elapsed\n", elapsed);
+
+    for (int j = 0; j < LAB1_RESULT_COUNT; j++)
+    {
+        printf("%d: %d\n", factors[j], totals[j]);
     }
 
     return 0;

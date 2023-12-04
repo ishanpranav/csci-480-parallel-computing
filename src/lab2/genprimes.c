@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+/** Represents text as a zero-terminated sequence of characters. */
+typedef char *String;
+
 /**
  * The main entry point for the application.
  *
@@ -17,7 +20,7 @@
  * @return An exit code. This value is 0, indicating success, or 1, indicating
  *         a usage or system error.
  */
-int main(int count, char *args[])
+int main(int count, String args[])
 {
     if (count != 3)
     {
@@ -28,7 +31,7 @@ int main(int count, char *args[])
 
     // Since `n` can be up to 10,000,000 we need at least 32 bits (`long`).
 
-    long n = strtol(args[1], NULL, 10);
+    long n = atol(args[1]);
 
     if (n < 2 || n > 10000000)
     {
@@ -47,6 +50,7 @@ int main(int count, char *args[])
     }
 
     // Track whether each of the numbers in [2, n] is composite (crossed out)
+    // We track composites rather than primes so that we can use calloc()
 
     bool *composites = calloc((n - 1), sizeof *composites);
 
@@ -80,6 +84,8 @@ int main(int count, char *args[])
 
     double start = omp_get_wtime();
     long end = (n + 1) / 2;
+
+    // Implementation of the second (faster) algorithm
 
 #pragma omp parallel for num_threads(threads)
     for (long i = 2; i <= end; i++)
