@@ -12,7 +12,8 @@ all: \
 	mpitrapezoid \
 	mpimatrix \
 	omptrapezoid \
-	omppi
+	omppi \
+	ompblocks
 
 init:
 	mkdir -p $(OUTPUT)
@@ -41,5 +42,8 @@ omptrapezoid: init omptrapezoid.c
 omppi: init omppi.c
 	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)omppi omppi.c
 
+ompblocks: init ompblocks.c
+	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)ompblocks ompblocks.c
+	
 clean:
 	rm -f *~ ../obj/* *.txt a.out

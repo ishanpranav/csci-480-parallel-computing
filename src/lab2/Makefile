@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -O3 -std=c99 -fopenmp
 all: genprimes
 
 genprimes:
-	$(CC) $(CFLAGS) -o genprimes.o genprimes.c
+	$(CC) $(CFLAGS) -o genprimes genprimes.c
 	
 clean:
-	rm -f *.o *~ *.txt a.out
+	rm -f *.o *~ *.txt a.out genprimes

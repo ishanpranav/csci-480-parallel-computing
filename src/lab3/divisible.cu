@@ -38,14 +38,14 @@ int main(int count, String args[])
         return 1;
     }
 
-    long count = 0;
+    long result = 0;
     long factor = atol(args[2]);
     int blocks = 0;
     int threadsPerBlock = 0;
 
     printf(
-        "There are %d numbers divisible by %d in the range [2, %d].\nNumber of blocks used is %d\nNumber of threads per block is %d",
-        count,
+        "There are %ld numbers divisible by %ld in the range [2, %ld].\nNumber of blocks used is %d\nNumber of threads per block is %d\n",
+        result,
         factor,
         n,
         blocks,

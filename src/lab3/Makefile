@@ -1,5 +1,5 @@
 CC = nvcc
-CFLAGS = -Wall -Wextra
+CFLAGS = 
 
 all: divisible
 
