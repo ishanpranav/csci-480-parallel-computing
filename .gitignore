@@ -1,5 +1,4 @@
 .vscode/
 obj/
-src/*.txt
 *.exe
 *.obj

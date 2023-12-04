@@ -1,3 +1,7 @@
+// Author: Ishan Pranav
+// Copyright (c) 2023 Ishan Pranav. All rights reserved.
+// Licensed under the MIT License.
+
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,9 +12,10 @@
  *
  * @param count the number of command-line arguments.
  * @param args  a collection of command-line arguments. The length of the
- *              collection is given by the `count` parameter.
+ *              collection is given by the `count` parameter. By convention,
+ *              the first argument is the name of the program.
  * @return An exit code. This value is 0, indicating success, or 1, indicating
- *         a usage error.
+ *         a usage or system error.
  */
 int main(int count, char *args[])
 {
@@ -41,49 +46,52 @@ int main(int count, char *args[])
         return 1;
     }
 
+    // Track whether each of the numbers in [2, n] is composite (crossed out)
+
     bool *composites = calloc((n - 1), sizeof *composites);
-    long end = n - 2;
 
     if (!composites)
     {
-        printf("Error: Out of memory.\rn");
+        fprintf(stderr, "Error: Out of memory.\n");
 
         return 1;
     }
 
     /**
-     * FOR EACH factor IN [2, (n + 1) / 2]
-     *  IF factor is crossed out THEN NEXT
-     *  FOR EACH product IN [factor + 1, n]
-     *   IF product is crossed out THEN NEXT
-     *   IF product is divisible by factor THEN cross out product
-     *   NEXT
+     * FOR i := 2 TO (n + 1) / 2
+     *      IF i is crossed out THEN NEXT
+     *
+     *      PARALLEL FOR j := i + 1 TO n
+     *          IF j is crossed out THEN NEXT
+     *          IF i divides j THEN cross out j
+     *      NEXT
      * NEXT
-    */
+     */
+
+    /*
+     * PARALLEL FOR i := 2 TO (n + 1) / 2
+     *      IF i is crossed out THEN NEXT
+     *
+     *      FOR j := 2i TO n STEP i
+     *          cross out j
+     *      NEXT
+     * NEXT
+     */
 
     double start = omp_get_wtime();
+    long end = (n + 1) / 2;
 
-    end = ((n - 2) + 1) / 2;
-
-    for (long i = 0; i <= end; i++)
+#pragma omp parallel for num_threads(threads)
+    for (long i = 2; i <= end; i++)
     {
-        if (composites[i])
+        if (composites[i - 2])
         {
             continue;
         }
 
-#pragma omp parallel for num_threads(threads)
-        for (long j = i + 1; j <= n - 2; j++)
+        for (long j = i * 2; j <= n; j += i)
         {
-            if (composites[j])
-            {
-                continue;
-            }
-
-            if ((j + 2) % (i + 2) == 0)
-            {
-                composites[j] = true;
-            }
+            composites[j - 2] = true;
         }
     }
 
@@ -102,12 +110,10 @@ int main(int count, char *args[])
 
     if (!stream)
     {
-        printf("Error: I/O.\n");
+        fprintf(stderr, "Error: I/O.\n");
 
         return 1;
     }
-
-    long x = 0;
 
     for (long i = 0; i <= n - 2; i++)
     {
@@ -116,14 +122,11 @@ int main(int count, char *args[])
             continue;
         }
 
-        x++;
-
         fprintf(stream, "%ld ", i + 2);
     }
 
     fclose(stream);
     free(composites);
-    printf("%ld\n", x);
 
     return 0;
 }
