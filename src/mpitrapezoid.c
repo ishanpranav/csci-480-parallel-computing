@@ -1,7 +1,14 @@
 #include <mpi.h>
 #include <stdio.h>
-#include "core.h"
-#include "double_double_func.h"
+
+/** Represents text as a zero-terminated sequence of characters. */
+typedef char *String;
+
+/**
+ * Represents a function whose input is one double-precision floating-point
+ * number and whose output is a double-precision floating-point number.
+ */
+typedef double (*DoubleDoubleFunc)(double value);
 
 /**
  * Reads the properties of a trapezoid from the standard input stream and
@@ -21,7 +28,7 @@
  *             trapezoids. This parameter is passed uninitialized; any value
  *             originally supplied in `n` will be overwritten.
  */
-static void mpitrapezoid_read(int rank, int size, double *a, double *b, int *n)
+static void read(int rank, int size, double *a, double *b, int *n)
 {
     if (rank == 0)
     {
@@ -41,7 +48,7 @@ static void mpitrapezoid_read(int rank, int size, double *a, double *b, int *n)
  * @return The `y`-coordinate corresponding to the given `x`-coordinate for the
  *         function `y=x^2`.
  */
-static double mpitrapezoid_parabola(double x)
+static double parabola(double x)
 {
     return x * x;
 }
@@ -57,8 +64,8 @@ static double mpitrapezoid_parabola(double x)
  * @return An approximation of the integral of `f(x)` from `a` to `b` using `n`
  *         trapezoids, with each trapezoid having a width of `dx`.
  */
-static double mpitrapezoid_integrate(
-    DoubleDoubleFunc f, 
+static double integrate(
+    DoubleDoubleFunc f,
     double a,
     double b,
     int n,
@@ -93,17 +100,17 @@ int main(int count, String args[])
     MPI_Init(&count, &args);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-    mpitrapezoid_read(rank, size, &a, &b, &n);
+    read(rank, size, &a, &b, &n);
 
     int localN = n / size;
     double dx = (b - a) / n;
     double localA = a + (rank * localN * dx);
     double localB = localA + (localN * dx);
-    double localIntegral = mpitrapezoid_integrate(
-        mpitrapezoid_parabola,
-        localA, 
+    double localIntegral = integrate(
+        parabola,
+        localA,
         localB,
-        localN, 
+        localN,
         dx);
     double integral;
 

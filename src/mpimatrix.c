@@ -1,9 +1,16 @@
-#include "core.h"
-#include "double_array.h"
 #include <mpi.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+/** Represents text as a zero-terminated sequence of characters. */
+typedef char *String;
+
+/** Represents a vector of double-precision floating-point values. */
+typedef double *Vector;
+
+/** Represents a matrix of double-precision floating-point values. */
+typedef double *Matrix;
 
 /**
  * Terminates the program if a success condition is not met.
@@ -14,11 +21,7 @@
  * @param message the error message associated with a failure condition.
  * @param comm    the communicator.
  */
-static void mpimatrix_assert(
-    bool localOk,
-    String source,
-    String message,
-    MPI_Comm comm)
+static void check(bool localOk, String source, String message, MPI_Comm comm)
 {
     bool ok;
 
@@ -54,12 +57,7 @@ static void mpimatrix_assert(
  * @param size   the number of communicators.
  * @param comm   the communicator.
  */
-static void mpimatrix_read(
-    int rank,
-    int size,
-    MPI_Comm comm,
-    int *m,
-    int *n)
+static void dimensions(int rank, int size, MPI_Comm comm, int *m, int *n)
 {
     if (rank == 0)
     {
@@ -71,9 +69,9 @@ static void mpimatrix_read(
 
     MPI_Bcast(m, 1, MPI_INT, 0, comm);
     MPI_Bcast(n, 1, MPI_INT, 0, comm);
-    mpimatrix_assert(
+    check(
         *m <= 0 || *n <= 0 || *m % size != 0 || *n % size != 0,
-        "mpimatrix_read",
+        "dimensions",
         "m and n must be positive and evenly divisible by size",
         comm);
 }
@@ -89,24 +87,24 @@ static void mpimatrix_read(
  * @param rank        the communicator identifier.
  * @param comm        the communicator.
  */
-static void mpimatrix_read_matrix(
+static void matrix(
     String prompt,
-    DoubleMatrix localMatrix,
+    Matrix localMatrix,
     int m,
     int localM,
     int n,
     int rank,
     MPI_Comm comm)
 {
-    DoubleMatrix matrix;
+    Matrix matrix;
 
     if (rank == 0)
     {
-        matrix = double_matrix(m, n);
+        matrix = malloc(m * n * sizeof(double));
 
-        mpimatrix_assert(
+        check(
             matrix,
-            "mpimatrix_read_matrix",
+            "matrix",
             "Can't allocate temporary matrix",
             comm);
         printf("Enter the matrix %s\n", prompt);
@@ -150,23 +148,23 @@ static void mpimatrix_read_matrix(
  * @param rank        the communicator identifier.
  * @param comm        the communicator.
  */
-static void mpimatrix_read_vector(
+static void vector(
     String prompt,
-    DoubleArray localVector,
+    Vector localVector,
     int n,
     int localN,
     int rank,
     MPI_Comm comm)
 {
-    DoubleArray vector;
+    Vector vector;
 
     if (rank == 0)
     {
-        vector = double_array(n);
+        vector = malloc(n * sizeof(double));
 
-        mpimatrix_assert(
+        check(
             vector,
-            "mpimatrix_read_vector",
+            "vector",
             "Can't allocate temporary vector",
             comm);
         printf("Enter the vector %s\n", prompt);
@@ -208,24 +206,24 @@ static void mpimatrix_read_vector(
  * @param rank        the communicator identifier.
  * @param comm        the communicator.
  */
-static void mpimatrix_print_matrix(
+static void draw(
     String title,
-    DoubleMatrix localMatrix,
+    Matrix localMatrix,
     int m,
     int localM,
     int n,
     int rank,
     MPI_Comm comm)
 {
-    DoubleMatrix matrix;
+    Matrix matrix;
 
     if (rank == 0)
     {
-        matrix = double_matrix(m, n);
+        matrix = malloc(m * n * sizeof(double));
 
-        mpimatrix_assert(
+        check(
             matrix,
-            "mpimatrix_print_matrix",
+            "draw",
             "Can't allocate temporary matrix",
             comm);
     }
@@ -265,7 +263,7 @@ static void mpimatrix_print_matrix(
 
 /**
  * Prints a vector to the standard output stream.
- * 
+ *
  * @param title       the user-friendly name of the vector.
  * @param localVector the local vector.
  * @param n           the length of the vector.
@@ -273,23 +271,23 @@ static void mpimatrix_print_matrix(
  * @param rank        the communicator identifier.
  * @param comm        the communicator.
  */
-static void mpimatrix_print_vector(
+static void write(
     String title,
-    DoubleArray localVector,
+    Vector localVector,
     int n,
     int localN,
     int rank,
     MPI_Comm comm)
 {
-    DoubleArray vector;
+    Vector vector;
 
     if (rank == 0)
     {
-        vector = double_array(n);
+        vector = malloc(n * sizeof(double));
 
-        mpimatrix_assert(
+        check(
             vector,
-            "mpimatrix_print_vector",
+            "write",
             "Can't allocate temporary vector",
             comm);
     }
@@ -320,7 +318,7 @@ static void mpimatrix_print_vector(
 
 /**
  * Multiplies a matrix by a vector.
- *  
+ *
  * @param localA the local matrix factor.
  * @param localX the local vector factor.
  * @param localM the local number of rows in the matrix.
@@ -329,20 +327,20 @@ static void mpimatrix_print_vector(
  * @param comm   the communicator.
  * @return The local product of the local matrix and vector factors.
  */
-static DoubleArray mpimatrix_multiply(
-    DoubleMatrix localA,
-    DoubleArray localX,
+static Vector multiply(
+    Matrix localA,
+    Vector localX,
     int localM,
     int n,
     int localN,
     MPI_Comm comm)
 {
-    DoubleArray localY = double_array(localM);
-    DoubleArray x = double_array(n);
+    Vector localY = malloc(localM * sizeof(double));
+    Vector x = malloc(n * sizeof(double));
 
-    mpimatrix_assert(
+    check(
         x,
-        "mpimatrix_multiply",
+        "multiply",
         "Can't allocate temporary vector",
         comm);
     MPI_Allgather(localX, localN, MPI_DOUBLE, x, localN, MPI_DOUBLE, comm);
@@ -382,24 +380,24 @@ int main(int count, String args[])
     MPI_Init(&count, &args);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    mpimatrix_read(rank, size, MPI_COMM_WORLD, &m, &n);
+    dimensions(rank, size, MPI_COMM_WORLD, &m, &n);
 
     int localM = m / size;
     int localN = n / size;
-    DoubleMatrix localA = double_matrix(localM, n);
-    DoubleArray localX = double_array(localN);
+    Matrix localA = malloc(localM * n * sizeof(double));
+    Vector localX = malloc(localN * sizeof(double));
 
-    mpimatrix_assert(
+    check(
         localA && localX,
         "main",
         "Can't allocate local arrays",
         MPI_COMM_WORLD);
-    mpimatrix_read_matrix("A", localA, m, localM, n, rank, MPI_COMM_WORLD);
-    mpimatrix_print_matrix("A", localA, m, localM, n, rank, MPI_COMM_WORLD);
-    mpimatrix_read_vector("x", localX, n, localN, rank, MPI_COMM_WORLD);
-    mpimatrix_print_vector("x", localX, n, localN, rank, MPI_COMM_WORLD);
-    
-    DoubleMatrix localY = mpimatrix_multiply(
+    matrix("A", localA, m, localM, n, rank, MPI_COMM_WORLD);
+    draw("A", localA, m, localM, n, rank, MPI_COMM_WORLD);
+    vector("x", localX, n, localN, rank, MPI_COMM_WORLD);
+    write("x", localX, n, localN, rank, MPI_COMM_WORLD);
+
+    Matrix localY = multiply(
         localA,
         localX,
         localM,
@@ -407,7 +405,7 @@ int main(int count, String args[])
         localN,
         MPI_COMM_WORLD);
 
-    mpimatrix_print_vector("y", localY, m, localM, rank, MPI_COMM_WORLD);
+    write("y", localY, m, localM, rank, MPI_COMM_WORLD);
     free(localA);
     free(localX);
     free(localY);

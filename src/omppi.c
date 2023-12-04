@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "core.h"
-#include "random.h"
+
+/** Represents text as a zero-terminated sequence of characters. */
+typedef char *String;
 
 /**
  * The main entry point for the application.
@@ -18,7 +19,7 @@ int main(int count, String args[])
 {
     if (count != 3)
     {
-        fprintf(stderr, "usage: omppi <iterations> <block size>\n");
+        fprintf(stderr, "usage: omppi <iterations> <block_size>\n");
 
         return 1;
     }
@@ -27,12 +28,11 @@ int main(int count, String args[])
     int n = atoi(args[1]);
     int blockSize = atoi(args[2]);
     double t0 = omp_get_wtime();
-    IntArray durations = int_array(n);
-    Random shared = random_get_shared();
+    int *durations = malloc(n * sizeof(int));
 
     for (i = 0; i < n; i++)
     {
-        durations[i] = random_next(shared, 1, 5, NULL);
+        durations[i] = (rand() % 4) + 1;
     }
 
     double t1;

@@ -1,8 +1,15 @@
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "core.h"
-#include "double_double_func.h"
+
+/** Represents text as a zero-terminated sequence of characters. */
+typedef char *String;
+
+/**
+ * Represents a function whose input is one double-precision floating-point
+ * number and whose output is a double-precision floating-point number.
+ */
+typedef double (*DoubleDoubleFunc)(double value);
 
 /**
  * Approximates a definite integral using a trapezoidal Riemann sum.
@@ -15,7 +22,7 @@
  * @return An approximation of the integral of `f(x)` from `a` to `b` using `n`
  *         trapezoids, with each trapezoid having a width of `dx`.
  */
-static double omptrapezoid_integrate(
+static double integrate(
     DoubleDoubleFunc f,
     double a,
     double b,
@@ -41,7 +48,7 @@ static double omptrapezoid_integrate(
  * @return The `y`-coordinate corresponding to the given `x`-coordinate for the
  *         function `y=x^2`.
  */
-static double omptrapezoid_parabola(double x)
+static double parabola(double x)
 {
     return x * x;
 }
@@ -59,7 +66,7 @@ int main(int count, String args[])
 {
     if (count != 2)
     {
-        fprintf(stderr, "usage: omptrapezoid <number of threads>\n");
+        printf("Usage: omptrapezoid <number of threads>\n");
 
         return 1;
     }
@@ -75,7 +82,7 @@ int main(int count, String args[])
            n,
            a,
            b,
-           omptrapezoid_integrate(omptrapezoid_parabola, a, b, n, threads));
+           integrate(parabola, a, b, n, threads));
 
     return 0;
 }

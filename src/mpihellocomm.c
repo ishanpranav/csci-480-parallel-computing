@@ -1,9 +1,10 @@
 #include <mpi.h>
 #include <stdio.h>
 #include <string.h>
-#include "core.h"
+#define BUFFER_SIZE 128
 
-const int MAX_STRING = 100;
+/** Represents text as a zero-terminated sequence of characters. */
+typedef char *String;
 
 /**
  * The main entry point for the application.
@@ -17,7 +18,7 @@ int main(int count, String args[])
 {
     int size;
     int rank;
-    char greeting[MAX_STRING];
+    char greeting[BUFFER_SIZE];
 
     MPI_Init(&count, &args);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -31,7 +32,7 @@ int main(int count, String args[])
         {
             MPI_Recv(
                 greeting,
-                MAX_STRING,
+                BUFFER_SIZE,
                 MPI_CHAR,
                 comm,
                 0,

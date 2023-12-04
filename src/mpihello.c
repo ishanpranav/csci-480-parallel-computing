@@ -4,7 +4,9 @@
 
 #include <mpi.h>
 #include <stdio.h>
-#include "core.h"
+
+/** Represents text as a zero-terminated sequence of characters. */
+typedef char *String;
 
 /**
  * The main entry point for the application.

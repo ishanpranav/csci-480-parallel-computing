@@ -11,8 +11,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include "core.h"
-#include "single_array.h"
+
+/** Represents text as a zero-terminated sequence of characters. */
+typedef char *String;
+
+/** Represents an array of single-precision floating-point values. */
+typedef float *SingleArray;
 
 /**
  * Generates a collection of random single-precision floating-point numbers
@@ -22,9 +26,9 @@
  * @return A collection of random single-precision floating-point numbers. The
  *         length of the collection is given by the `count` parameter.
 */
-static SingleArray mpireduce_randomize(int count)
+static SingleArray randomize(int count)
 {
-    SingleArray result = single_array(count);
+    SingleArray result = malloc(count * sizeof(float));
 
     for (int i = 0; i < count; i++)
     {
@@ -40,13 +44,14 @@ static SingleArray mpireduce_randomize(int count)
  * @param count the number of command-line arguments.
  * @param args  a collection of command-line arguments. The length of the
  *              collection is given by the `count` parameter.
- * @return An exit code. This value is always 0, indicating success.
+ * @return An exit code. This value is 0, indicating success, or 1, indicating
+ *         a usage error.
  */
 int main(int count, String args[])
 {
     if (count != 2)
     {
-        fprintf(stderr, "Usage: mpiexec ./mpireduce <elements_per_process>\n");
+        printf("Usage: mpiexec ./mpireduce <elements_per_process>\n");
         
         return 1;
     }
@@ -61,7 +66,7 @@ int main(int count, String args[])
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     srand(rank);
 
-    SingleArray array = mpireduce_randomize(elementsPerProcess);
+    SingleArray array = randomize(elementsPerProcess);
     float localSum = 0;
     float globalSum;
 
@@ -75,7 +80,6 @@ int main(int count, String args[])
         rank, 
         localSum, 
         localSum / elementsPerProcess);
-
     MPI_Reduce(
         &localSum,
         &globalSum, 
