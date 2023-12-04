@@ -1,6 +1,7 @@
 #include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <unistd.h>
 
 /** Represents text as a zero-terminated sequence of characters. */
@@ -30,6 +31,8 @@ int main(int count, String args[])
     double t0 = omp_get_wtime();
     int *durations = malloc(n * sizeof(int));
 
+    srand(time(NULL));
+    
     for (i = 0; i < n; i++)
     {
         durations[i] = (rand() % 4) + 1;
