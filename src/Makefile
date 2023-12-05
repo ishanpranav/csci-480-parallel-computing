@@ -1,19 +1,31 @@
 CC			= gcc
 MPICC		= mpicc
+CUDACC		= nvcc
 CFLAGS		=  -g -Wall -std=c99
 OMPFLAGS	=  -fopenmp
+CUDAFLAGS   = 
 OUTPUT	= ../obj/
 
-all: \
+mpi: \
 	mpihello \
 	mpihellocomm \
 	mpioutput \
 	mpireduce \
 	mpitrapezoid \
 	mpimatrix \
+
+omp: \
 	omptrapezoid \
 	omppi \
 	ompblocks
+
+cuda: \
+	cudahello
+
+all: \
+	mpi \
+	omp \
+	cuda
 
 init:
 	mkdir -p $(OUTPUT)
@@ -45,5 +57,8 @@ omppi: init omppi.c
 ompblocks: init ompblocks.c
 	$(CC) $(CFLAGS) $(OMPFLAGS) -o $(OUTPUT)ompblocks ompblocks.c
 	
+cudahello: init cudahello.cu
+	$(CUDACC) $(CUDAFLAGS) -o $(OUTPUT)cudahello cudahello.cu
+
 clean:
 	rm -f *~ ../obj/* *.txt a.out
