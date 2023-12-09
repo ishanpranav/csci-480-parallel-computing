@@ -3,7 +3,7 @@ MPICC		= mpicc
 CUDACC		= nvcc
 CFLAGS		=  -g -Wall -std=c99
 OMPFLAGS	=  -fopenmp
-CUDAFLAGS   = 
+CUDAFLAGS   = --compiler-options -Wall
 OUTPUT	= ../obj/
 
 mpi: \
@@ -20,7 +20,8 @@ omp: \
 	ompblocks
 
 cuda: \
-	cudahello
+	cudahello \
+	cudavector
 
 all: \
 	mpi \
@@ -60,5 +61,8 @@ ompblocks: init ompblocks.c
 cudahello: init cudahello.cu
 	$(CUDACC) $(CUDAFLAGS) -o $(OUTPUT)cudahello cudahello.cu
 
+cudavector: init cudavector.cu
+	$(CUDACC) $(CUDAFLAGS) -o $(OUTPUT)cudavector cudavector.cu
+	
 clean:
 	rm -f *~ ../obj/* *.txt a.out
